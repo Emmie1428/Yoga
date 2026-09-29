@@ -7,9 +7,9 @@ import { Session } from '../types';
 function SessionDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState<any>(true);
-  const [error, setError] = useState<any>('');
+  const [session, setSession] = useState<Session>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const user = authService.getCurrentUser();
   const token = authService.getToken();
 
