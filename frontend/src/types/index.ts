@@ -4,7 +4,7 @@ export interface User {
   firstName: string;
   lastName: string;
   admin: boolean;
-  createdAt?: string;
+  createdAt: string;
   updatedAt?: string;
 }
 
