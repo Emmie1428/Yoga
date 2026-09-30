@@ -28,7 +28,7 @@ function SessionDetail() {
         signal
       });
       setSession(response.data);
-    } catch (error) {
+    } catch (error: unknown) {
       if(axios.isCancel(error)) { /*Mute l'erreur de rerender, empêche de considéré commeun abort*/
         return
       }
