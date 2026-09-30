@@ -1,5 +1,6 @@
 import api from './api';
-import { AuthResponse, LoginCredentials, RegisterData } from '../types';
+import { AuthResponse, LoginCredentials, RegisterData, User } from '../types';
+
 
 
 export const authService = {
@@ -26,15 +27,15 @@ export const authService = {
     localStorage.removeItem('user');
   },
 
-  getCurrentUser: (): AuthResponse | null => {
+  getCurrentUser: (): User | null => {
     const user = localStorage.getItem('user');
     if(!user) { 
       return null
     }
-    return JSON.parse(user) as AuthResponse
+    return JSON.parse(user) as User
   },
 
-  updateCurrentUser: (updates: Partial<AuthResponse>): AuthResponse | null => {
+  updateCurrentUser: (updates: Partial<User>): User | null => {
     const user = authService.getCurrentUser()
     if(!user) { 
       return null

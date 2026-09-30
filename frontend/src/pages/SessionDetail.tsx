@@ -3,84 +3,75 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { authService } from '../services/auth.service';
 import { Session } from '../types';
+import axios from 'axios';
 
 function SessionDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [session, setSession] = useState<Session>();
+  const [session, setSession] = useState<Session | null >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
   const user = authService.getCurrentUser();
-  const token = authService.getToken();
 
   useEffect(() => {
-    fetchSession();
+    const controller = new AbortController()
+    fetchSession(controller.signal);
+    return () => controller.abort()
   }, [id]);
 
-  const fetchSession = async (): Promise<any> => {
+
+  const fetchSession = async (signal?: AbortSignal): Promise<void> => {
     try {
       setLoading(true);
       const response = await api.get<Session>(`/session/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        signal
       });
       setSession(response.data);
-    } catch (err: any) {
+    } catch (error) {
+      if(axios.isCancel(error)) { /*Mute l'erreur de rerender, empêche de considéré commeun abort*/
+        return
+      }
       setError('Failed to load session details');
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleParticipate = async (): Promise<any> => {
+  if (!user) {
+      return null
+    }
+
+  const handleParticipate = async (): Promise<void> => {
     try {
       await api.post(
         `/session/${id}/participate/${user.id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
       );
       fetchSession();
-    } catch (err: any) {
+    } catch {
       alert('Failed to join session');
-      console.error(err);
     }
   };
 
-  const handleUnparticipate = async (): Promise<any> => {
+  const handleUnparticipate = async (): Promise<void> => {
     try {
-      await api.delete(`/session/${id}/participate/${user.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.delete(`/session/${id}/participate/${user.id}`);
       fetchSession();
-    } catch (err: any) {
+    } catch {
       alert('Failed to leave session');
-      console.error(err);
     }
   };
 
-  const handleDelete = async (): Promise<any> => {
+  const handleDelete = async (): Promise<void> => {
     if (!window.confirm('Are you sure you want to delete this session?')) {
       return;
     }
 
     try {
-      await api.delete(`/session/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.delete(`/session/${id}`);
       navigate('/sessions');
-    } catch (err: any) {
+    } catch {
       alert('Failed to delete session');
-      console.error(err);
     }
   };
 
