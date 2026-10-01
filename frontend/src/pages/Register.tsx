@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/auth.service';
 import { RegisterData } from '../types';
+import { getApiErrorMessage } from '../utils/error';
 
 function Register() {
   const navigate = useNavigate();
@@ -29,8 +30,8 @@ function Register() {
     try {
       await authService.register(formData);
       navigate('/sessions');
-    } catch {
-      setError('Registration failed');
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error));
     } finally {
       setLoading(false);
     }

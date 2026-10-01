@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { authService } from '../services/auth.service';
 import { Session } from '../types';
-import axios from 'axios';
+import { isRequestCanceled, getApiErrorMessage } from '../utils/error';
 
 function Sessions() {
   const [sessions, setSessions] = useState<Session[] >([]);
@@ -18,22 +18,25 @@ function Sessions() {
   }, []);
 
   const fetchSessions = async (signal?: AbortSignal): Promise<void> => {
-    try {
-      setLoading(true);
-      const response = await api.get<Session[]>('/session', {
-        signal
-      });
-      setSessions(response.data);
-    } catch (error: unknown) {
-      if(axios.isCancel(error)) { /*Mute l'erreur de rerender, empêche de considéré comme un abort*/
-        return
-      }
-      console.error('Failed to load sessions:', error);
-      setError('Failed to load sessions');
-    } finally {
-      setLoading(false);
+  try {
+    setLoading(true);
+
+    const response = await api.get<Session[]>('/session', {
+      signal,
+    });
+
+    setSessions(response.data);
+  } catch (error: unknown) {
+    if (isRequestCanceled(error)) {
+      return;
     }
-  };
+
+    console.error('Failed to load sessions:', error);
+    setError(getApiErrorMessage(error));
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleDelete = async (sessionId: number): Promise<void> => {
     if (!window.confirm('Are you sure you want to delete this session?')) {
@@ -43,8 +46,8 @@ function Sessions() {
     try {
       await api.delete(`/session/${sessionId}`);
       await fetchSessions();
-    } catch  {
-      alert('Failed to delete session');
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error));
     }
   };
 
