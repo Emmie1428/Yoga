@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ZodError } from 'zod';
+import { z } from 'zod';
 import { AppError } from '../utils/appError';
 
 export function errorMiddleware(
@@ -10,10 +10,10 @@ export function errorMiddleware(
 ) {
   console.error(error);
 
-  if (error instanceof ZodError) {
+  if (error instanceof z.ZodError) {
     return res.status(400).json({
       message: 'Validation error',
-      errors: error.flatten(),
+      errors: z.treeifyError(error),
     });
   }
 

@@ -24,13 +24,13 @@ router.post('/api/auth/login', validate(LoginSchema), asyncHandler((req, res) =>
 router.post('/api/auth/register', validate(RegisterSchema), asyncHandler((req, res) => authController.register(req, res)));
 
 // Session routes (protected)
-router.get('/api/session', authMiddleware, (req, res) => sessionController.getAll(req, res));
-router.get('/api/session/:id', authMiddleware, (req, res) => sessionController.getById(req, res));
-router.post('/api/session', authMiddleware, validate(CreateSessionSchema), (req, res) => sessionController.create(req, res));
-router.put('/api/session/:id', authMiddleware, validate(UpdateSessionSchema), (req, res) => sessionController.update(req, res));
-router.delete('/api/session/:id', authMiddleware, (req, res) => sessionController.delete(req, res));
-router.post('/api/session/:id/participate/:userId', authMiddleware, (req, res) => sessionController.participate(req, res));
-router.delete('/api/session/:id/participate/:userId', authMiddleware, (req, res) => sessionController.unparticipate(req, res));
+router.get('/api/session', authMiddleware, asyncHandler((req, res) => sessionController.getAll(req, res)));
+router.get('/api/session/:id', authMiddleware, asyncHandler((req, res) => sessionController.getById(req, res)));
+router.post('/api/session', authMiddleware, validate(CreateSessionSchema), asyncHandler((req, res) => sessionController.create(req, res)));
+router.put('/api/session/:id', authMiddleware, validate(UpdateSessionSchema), asyncHandler((req, res) => sessionController.update(req, res)));
+router.delete('/api/session/:id', authMiddleware, asyncHandler((req, res) => sessionController.delete(req, res)));
+router.post('/api/session/:id/participate/:userId', authMiddleware, asyncHandler((req, res) => sessionController.participate(req, res)));
+router.delete('/api/session/:id/participate/:userId', authMiddleware, asyncHandler((req, res) => sessionController.unparticipate(req, res)));
 
 // Teacher routes (protected)
 router.get('/api/teacher', authMiddleware, (req, res) => teacherController.getAll(req, res));
