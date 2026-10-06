@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 
 
-//asyncHandler transmet les erreurs à error.,iddleware sans faire de try/catch dans chaque//
+//asyncHandler transmet les erreurs à error. middleware sans faire de try/catch dans chaque//
 export function asyncHandler(
   handler: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
 ): RequestHandler {
