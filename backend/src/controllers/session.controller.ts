@@ -19,7 +19,7 @@ export class SessionController {
   }
 
   return value;
-}
+  }
 
   async getAll(
     req: AuthRequest,
