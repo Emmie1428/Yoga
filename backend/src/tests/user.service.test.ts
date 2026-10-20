@@ -18,7 +18,7 @@ vi.mock('@prisma/client', () => ({
     }
 }))
 
- beforeEach(() => {
+beforeEach(() => {
     vi.clearAllMocks()
 })
 

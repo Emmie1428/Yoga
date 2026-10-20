@@ -109,10 +109,10 @@ export class SessionService {
         teacherId,
         },
         include: {
-        teacher: true,
-        participants: true,
-        },
-    });
+            teacher: true,
+            participants: true,
+        }
+    })
 
     return {
         id: session.id,
@@ -127,32 +127,31 @@ export class SessionService {
         users: [],
         createdAt: session.createdAt,
         updatedAt: session.updatedAt,
-    };
-    }
+    }}
    
     async update(
-  id: string,
-  name: string | undefined,
-  date: string | undefined,
-  description: string | undefined,
-  teacherId: number | undefined,
-  userId: number,
-) {
-  await this.checkAdmin(userId);
+        id: string,
+        name: string | undefined,
+        date: string | undefined,
+        description: string | undefined,
+        teacherId: number | undefined,
+        userId: number,
+        ) {
+        await this.checkAdmin(userId);
 
-  const sessionId = parseInt(id);
+        const sessionId = parseInt(id);
 
-  if (isNaN(sessionId)) {
-    throw new AppError('Invalid session ID', 400);
-  }
+        if (isNaN(sessionId)) {
+            throw new AppError('Invalid session ID', 400);
+        }
 
-  const existingSession = await prisma.session.findUnique({
-    where: { id: sessionId },
-  });
+        const existingSession = await prisma.session.findUnique({
+            where: { id: sessionId },
+        })
 
-  if (!existingSession) {
-    throw new AppError('Session not found', 404);
-  }
+        if (!existingSession) {
+            throw new AppError('Session not found', 404);
+        }
 
   const updateData: {
     name?: string;

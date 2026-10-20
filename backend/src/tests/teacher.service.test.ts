@@ -17,6 +17,10 @@ vi.mock('@prisma/client', () => ({
 
 const teacherService = new TeacherService()
 
+beforeEach(() => {
+        vi.clearAllMocks()
+    })
+
 describe('TeacherService - getAll', () => {
     const teacher = {
         id: 1,
@@ -25,10 +29,6 @@ describe('TeacherService - getAll', () => {
         createdAt: new Date('2026-10-20T00:00:00.000Z'),
         updatedAt: new Date('2026-10-20T00:00:00.000Z'),
     }
-
-    beforeEach(() => {
-        vi.clearAllMocks()
-    })
 
     it('should find all teachers', async () => {
         findManyMock.mockResolvedValue([teacher])
