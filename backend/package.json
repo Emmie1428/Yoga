@@ -11,9 +11,9 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "ts-node prisma/seed.ts",
     "prisma:studio": "prisma studio",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "coverage": "vitest run --coverage"
+    "test": "dotenv -e .env.test -- vitest",
+    "test:run": "dotenv -e .env.test -- vitest run",
+    "coverage": "dotenv -e .env.test -- vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +34,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22",
     "@vitest/coverage-istanbul": "^5.0.4",
+    "dotenv-cli": "^11.0.0",
     "nodemon": "^3.1.11",
     "prisma": "^5.20.0",
     "ts-node": "^10.9.2",
