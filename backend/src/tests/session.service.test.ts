@@ -422,7 +422,6 @@ describe('SessionService - unparticipate', () => {
         }
       }
     })
-
     expect(result).toEqual({message: 'Successfully left the session'})
   })
 })
