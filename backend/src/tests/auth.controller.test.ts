@@ -1,5 +1,38 @@
-import { describe, it, expect } from 'vitest'
+import { beforeAll, afterAll, describe, it, expect } from 'vitest'
+import type { Server } from 'node:http'
+import app from '../app'
+import { PrismaClient } from '@prisma/client'
 
+const prisma = new PrismaClient()
+
+let server: Server
+let baseUrl: string
+
+beforeAll(async () => {
+  server = app.listen(0)
+
+  await new Promise<void>((resolve) => {
+    server.once('listening', resolve)
+  });
+
+  const address = server.address();
+
+  if (!address || typeof address === 'string') {
+    throw new Error('Impossible de démarrer le serveur de test')
+  }
+
+  baseUrl = `http://127.0.0.1:${address.port}`
+})
+
+afterAll(async () => {
+  await new Promise<void>((resolve, reject) => {
+    server.close((error) => {
+      if (error) reject(error)
+      else resolve()
+    })
+  })
+  await prisma.$disconnect()
+})
 
 describe('POST /api/auth/login', () => {
   it('should return a token when credentials are valid', async () => {
@@ -7,9 +40,8 @@ describe('POST /api/auth/login', () => {
       email: 'yoga@studio.com',
       password: 'test!1234',
     }
-
     const response = await fetch(
-      'http://localhost:8090/api/auth/login',
+      `${baseUrl}/api/auth/login`,
       {
         method: 'POST',
         headers: {
@@ -18,7 +50,6 @@ describe('POST /api/auth/login', () => {
         body: JSON.stringify(credentials)
       }
     )
-
     const body = await response.json()
 
     expect(response.status).toBe(200)
@@ -27,28 +58,72 @@ describe('POST /api/auth/login', () => {
 })
 
 describe('POST /api/auth/register', () => {
-  it('should return create a user and a token after registering', async () => {
+  it('should create a user and return a token', async () => {
     const newUser = {
-      email: `jean${crypto.randomUUID().slice(0, 8)}@example.com`,
+      email: `jeanDupont@example.com`,
       password: 'secret123',
       firstName: 'Jean',
       lastName: 'Dupont'
     }
 
+    try {
+      const response = await fetch(`${baseUrl}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newUser)
+      })
+      const body = await response.json()
+
+      expect(response.status).toBe(201)
+      expect(body).toHaveProperty('token')
+    } finally {
+      //Supprime le compte pour éviter d'en créer plein//
+      await prisma.user.deleteMany({
+        where: { email: newUser.email }
+      })
+    }
+  })
+})
+
+describe('POST /api/auth/login - error.middleware', () => {
+  it('should return 400 when the email is missing', async () => {
+    const invalidCredential = {
+      password: 'test!1234'
+    }
     const response = await fetch(
-      'http://localhost:8090/api/auth/register',
+      `${baseUrl}/api/auth/login`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newUser)
+        body: JSON.stringify(invalidCredential)
       }
     )
-
     const body = await response.json()
 
-    expect(response.status).toBe(201)
-    expect(body).toHaveProperty('token')
+    expect(response.status).toBe(400)
+    expect(body).toHaveProperty('message', 'Validation error')
+    expect(body).toHaveProperty('errors')
+  })
+  it('should return 401 when the credentials are invalid', async () => {
+    const invalidCredentials = {
+      email: 'yoga@studio.com',
+      password: 'wrond-password',
+    }
+    const response = await fetch(
+      `${baseUrl}/api/auth/login`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(invalidCredentials)
+      }
+    )
+    const body = await response.json()
+
+    expect(response.status).toBe(401)
+    expect(body).toHaveProperty('message')
   })
 })

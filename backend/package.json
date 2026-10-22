@@ -11,8 +11,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "ts-node prisma/seed.ts",
     "prisma:studio": "prisma studio",
-    "test": "dotenv -e .env.test -- vitest",
-    "test:run": "dotenv -e .env.test -- vitest run",
+    "test": "dotenv -e .env.test -- vitest run",
     "coverage": "dotenv -e .env.test -- vitest run --coverage"
   },
   "keywords": [],

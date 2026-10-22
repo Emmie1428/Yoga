@@ -1,34 +1,26 @@
-import express from 'express';
-import cors from 'cors';
-import 'dotenv/config';
-import routes from './routes';
+import express from 'express'
+import cors from 'cors'
+import 'dotenv/config'
+import routes from './routes'
 
-import { errorMiddleware } from './middleware/error.middleware';
+import { errorMiddleware } from './middleware/error.middleware'
 
-
-const app = express();
-const PORT = process.env.PORT || 8090;
+const app = express()
 
 // Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 // Routes
-app.use(routes);
+app.use(routes)
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'Yoga Studio API is running' });
+  res.status(200).json({ status: 'ok', message: 'Yoga Studio API is running' })
 });
 
 // Global error middleware
-app.use(errorMiddleware);
+app.use(errorMiddleware)
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
-
-export default app;
+export default app
