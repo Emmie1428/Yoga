@@ -1,0 +1,150 @@
+import { beforeAll, afterAll, describe, it, expect } from 'vitest'
+import type { Server } from 'node:http'
+import app from '../app'
+import { generateToken } from '../utils/jwt.util'
+import jwt from 'jsonwebtoken'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+
+let server: Server
+let baseUrl: string
+let token: string
+let userId: number
+
+beforeAll(async () => {
+  server = app.listen(0)
+
+  await new Promise<void>((resolve) => {
+    server.once('listening', resolve)
+  })
+
+  const address = server.address()
+
+  if (!address || typeof address === 'string') {
+    throw new Error('Impossible de démarrer le serveur de test')
+  }
+
+  baseUrl = `http://127.0.0.1:${address.port}`
+  userId = 1
+  token = generateToken(userId)
+})
+
+afterAll(async () => {
+  await new Promise<void>((resolve, reject) => {
+    server.close((error) => {
+      if (error) reject(error)
+      else resolve()
+    })
+  })
+  await prisma.$disconnect()
+})
+
+describe('GET /api/user/:id', () => {
+    it('should return the user when the token is valid', async () => {
+        const response = await fetch(`${baseUrl}/api/user/${userId}`, {
+            headers: {
+            Authorization: `Bearer ${token}`
+            }
+        })
+
+        expect(response.status).toBe(200)
+    })
+    it('should return 401 + message when no token is provided - auth.middleware', async () => {
+        const response = await fetch(`${baseUrl}/api/user/${userId}`)
+
+        expect(response.status).toBe(401)
+        expect(await response.json()).toEqual({
+            message: 'No token provided'
+        })
+    })
+    it('should return 401 + message when the token is in the wrong format - auth.middleware', async () => {
+        const response = await fetch(`${baseUrl}/api/user/${userId}`, {
+            headers: {
+            Authorization: 'password'
+            }
+        })
+
+        expect(response.status).toBe(401)
+        expect(await response.json()).toEqual({
+            message: 'Invalid token format'
+        })
+    })
+    it('should return 401 + message when no the token is expired - auth.middleware', async () => {
+        const expiredToken = jwt.sign(
+            { userId: 1 },
+            process.env.JWT_SECRET || 'default-secret-key',
+            { expiresIn: -1 }
+            )
+        const response = await fetch(`${baseUrl}/api/user/${userId}`, {
+            headers: {
+            Authorization: `Bearer ${expiredToken}`
+            }
+        })
+
+        expect(response.status).toBe(401)
+        expect(await response.json()).toEqual({
+            message: 'Invalid or expired token'
+        })
+    })
+})
+
+describe('DELETE /api/user/:id', () => {
+    it('should delete the user', async () => {
+        const userToDelete = await prisma.user.create({
+            data: {
+            email: 'deletetest@example.com',
+            firstName: 'Test',
+            lastName: 'Delete',
+            password: 'password-hash',
+            admin: false
+            }
+        })
+        const token = generateToken(userToDelete.id)
+        const response = await fetch(`${baseUrl}/api/user/${userToDelete.id}`, {
+            method: 'DELETE',
+            headers: {
+            Authorization: `Bearer ${token}`
+            }
+        })
+
+        expect(response.status).toBe(200)
+    })
+})
+
+describe('POST /api/user/promote-admin', () => {
+  it('should return 403 outside development', async () => {
+    const userToPromote = await prisma.user.create({
+      data: {
+        email: 'promote-test@example.com',
+        firstName: 'Test',
+        lastName: 'Promote',
+        password: 'password-hash',
+        admin: false,
+      },
+    })
+
+    try {
+      const token = generateToken(userToPromote.id)
+
+      const response = await fetch(
+        `${baseUrl}/api/user/promote-admin`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+
+      expect(response.status).toBe(403)
+      expect(await response.json()).toEqual({
+        message: 'Admin self-promotion is only available in development',
+      })
+    } finally {
+      await prisma.user.delete({
+        where: { email: 'promote-test@example.com' },
+      })
+    }
+  })
+})
