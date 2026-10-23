@@ -24,23 +24,24 @@ export class UserController {
 
   async delete(req: AuthRequest, res: Response) {
     const userId = this.getParam(req.params.id)
-    if (req.userId === undefined) {
+    const requesterId = req.userId
+
+    if (requesterId === undefined) {
       throw new AppError('Unauthorized', 401)
     }
-    const response = await userService.delete(
-      userId,
-      req.userId
-    )
+    const response = await userService.delete(userId, requesterId)
 
     return res.status(200).json(response)
   }
 
   async promoteSelfToAdmin(req: AuthRequest, res: Response) {
-    if (!req.userId) {
-        throw new AppError('Unauthorized', 401)
-      }
+    const requesterId = req.userId
 
-      const user = await userService.promoteSelfToAdmin(req.userId)
+    if (requesterId === undefined) {
+      throw new AppError('Unauthorized', 401)
+    }
+
+      const user = await userService.promoteSelfToAdmin(requesterId)
 
       return res.status(200).json(user)
   }

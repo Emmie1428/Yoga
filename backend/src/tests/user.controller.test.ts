@@ -93,7 +93,7 @@ describe('DELETE /api/user/:id', () => {
     it('should delete the user', async () => {
         const userToDelete = await prisma.user.create({
             data: {
-            email: 'deletetest@example.com',
+            email: 'delete@example.com',
             firstName: 'Test',
             lastName: 'Delete',
             password: 'password-hash',
@@ -126,7 +126,6 @@ describe('POST /api/user/promote-admin', () => {
 
     try {
       const token = generateToken(userToPromote.id)
-
       const response = await fetch(
         `${baseUrl}/api/user/promote-admin`,
         {
@@ -143,8 +142,89 @@ describe('POST /api/user/promote-admin', () => {
       })
     } finally {
       await prisma.user.delete({
-        where: { email: 'promote-test@example.com' },
+        where: { email: 'promote-test@example.com' }
       })
     }
+  })
+  it('should promote to admin if in development', async () => {
+    const userToPromote = await prisma.user.create({
+      data: {
+        email: 'promote-test-pass@example.com',
+        firstName: 'Test',
+        lastName: 'Promote',
+        password: 'password-hash',
+        admin: false,
+      },
+    })
+    const originalNodeEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+
+    try {
+        const token = generateToken(userToPromote.id)
+        const response = await fetch(
+        `${baseUrl}/api/user/promote-admin`,
+        {
+            method: 'POST',
+            headers: {
+            Authorization: `Bearer ${token}`,
+            }
+        })
+
+        expect(response.status).toBe(200)
+        expect(await response.json()).toMatchObject({admin: true})
+    } finally {
+        if (originalNodeEnv === undefined) {
+            delete process.env.NODE_ENV
+        } else {
+            process.env.NODE_ENV = originalNodeEnv
+        }
+
+        await prisma.user.delete({
+            where: { email: 'promote-test-pass@example.com' }
+        })
+    }
+  })
+})
+
+
+
+///////////////////////////////////////////////////
+/*tests unitaire pour les erreur 401*/
+
+import { UserController } from '../controllers/user.controller'
+import { AuthRequest } from '../middleware/auth.middleware'
+import { Response } from 'express'
+
+describe('UserController.delete', () => {
+  it('should throw 401 when userId is undefined', async () => {
+    const controller = new UserController()
+
+    const req = {
+      params: { id: '1' },
+    } as unknown as AuthRequest
+
+    const res = {} as Response
+
+    await expect(controller.delete(req, res)).rejects.toMatchObject({
+      message: 'Unauthorized',
+      statusCode: 401,
+    })
+  })
+})
+
+describe('UserController.promoteSelfToAdmin', () => {
+  it('should throw 401 when userId is undefined', async () => {
+    const controller = new UserController()
+
+    const req = {
+      params: { id: '1' },
+    } as unknown as AuthRequest
+
+    const res = {} as Response
+
+    await expect(controller.promoteSelfToAdmin(req, res)).rejects.toMatchObject({
+      message: 'Unauthorized',
+      statusCode: 401,
+    })
   })
 })
