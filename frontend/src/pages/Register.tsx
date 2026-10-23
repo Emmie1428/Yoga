@@ -58,6 +58,7 @@ function Register() {
             <input
               type="text"
               name="firstName"
+              data-cy='firstName'
               value={formData.firstName}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
@@ -72,6 +73,7 @@ function Register() {
             <input
               type="text"
               name="lastName"
+              data-cy='lastName'
               value={formData.lastName}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
@@ -86,6 +88,7 @@ function Register() {
             <input
               type="email"
               name="email"
+              data-cy='email'
               value={formData.email}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
@@ -100,6 +103,7 @@ function Register() {
             <input
               type="password"
               name="password"
+              data-cy='password'
               value={formData.password}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
@@ -110,6 +114,7 @@ function Register() {
 
           <button
             type="submit"
+            data-cy='register-btn'
             disabled={loading}
             className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400"
           >
@@ -119,7 +124,7 @@ function Register() {
 
         <p className="mt-4 text-center text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-indigo-600 hover:text-indigo-800">
+          <Link to="/login" data-cy='login-link' className="text-indigo-600 hover:text-indigo-800">
             Login here
           </Link>
         </p>

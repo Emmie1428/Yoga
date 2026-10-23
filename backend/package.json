@@ -5,6 +5,7 @@
   "main": "dist/app.js",
   "scripts": {
     "dev": "nodemon",
+    "dev:test": "dotenv -e .env.test -- nodemon",
     "build": "tsc",
     "start": "node dist/app.js",
     "prisma:generate": "prisma generate",
