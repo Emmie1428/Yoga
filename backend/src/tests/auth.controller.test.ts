@@ -1,7 +1,8 @@
-import { beforeAll, afterAll, describe, it, expect } from 'vitest'
+import { beforeAll, afterAll, describe, it, expect, vi } from 'vitest'
 import type { Server } from 'node:http'
 import app from '../app'
 import { PrismaClient } from '@prisma/client'
+
 
 const prisma = new PrismaClient()
 
@@ -125,5 +126,40 @@ describe('POST /api/auth/login - error.middleware', () => {
 
     expect(response.status).toBe(401)
     expect(body).toHaveProperty('message')
+  })
+})
+
+///////////////////////////////////////////////////
+/*tests unitaire pour l'erreur de la function privée getAuthenticatedUserId et getParam*/
+import { Request, Response, NextFunction } from 'express'
+import { errorMiddleware } from '../middleware/error.middleware'
+
+describe('errorMiddleware', () => {
+  it('should return 500 for an unexpected error', () => {
+    const error = new Error('Unexpected error')
+
+    const json = vi.fn()
+    const status = vi.fn().mockReturnValue({ json })
+    const res = { status } as unknown as Response
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+
+    try {
+      errorMiddleware(
+        error,
+        {} as Request,
+        res,
+        vi.fn() as NextFunction
+      )
+
+      expect(status).toHaveBeenCalledWith(500)
+      expect(json).toHaveBeenCalledWith({
+        message: 'Internal server error',
+      })
+    } finally {
+      consoleErrorSpy.mockRestore()
+    }
   })
 })

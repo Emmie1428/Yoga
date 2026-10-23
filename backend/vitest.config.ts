@@ -7,7 +7,7 @@ export default defineConfig({
     coverage: {
       provider: 'istanbul',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['**/dto/', '**/routes/index.ts', '**/utils/', '**/server.ts']
+      exclude: ['**/routes/index.ts', '**/utils/jwt.util.ts', '**/server.ts', '**/app.ts']
     }
   }
 })
