@@ -1,4 +1,4 @@
-import { beforeAll, afterAll, describe, it, expect } from 'vitest'
+import { beforeAll, afterAll, describe, it, expect, vi } from 'vitest'
 import type { Server } from 'node:http'
 import app from '../app'
 import { generateToken } from '../utils/jwt.util'
@@ -6,6 +6,7 @@ import { generateToken } from '../utils/jwt.util'
 let server: Server
 let baseUrl: string
 let token: string
+let userId: number
 let teacherId: number
 
 beforeAll(async () => {
@@ -23,7 +24,8 @@ beforeAll(async () => {
 
   baseUrl = `http://127.0.0.1:${address.port}`
   teacherId = 1
-  token = generateToken(teacherId)
+  userId = 1
+  token = generateToken(userId)
 })
 
 afterAll(async () => {
@@ -57,4 +59,30 @@ describe('GET /api/teacher/:id', () => {
 
         expect(response.status).toBe(200)
     })
+})
+
+
+///////////////////////////////////////////////////
+/*tests unitaire pour l'erreur de la function privée et getParam*/
+import type { AuthRequest } from '../middleware/auth.middleware'
+import type { Response } from 'express'
+import { TeacherController } from '../controllers/teacher.controller'
+
+describe('TeacherController - getParam', () => {
+  it('should use the first value when the parameter is an array', async () => {
+    const controller = new TeacherController()
+
+    const req = {
+      params: { id: ['1', '2'] },
+    } as unknown as AuthRequest
+
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as unknown as Response
+
+    await controller.getById(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
+  })
 })

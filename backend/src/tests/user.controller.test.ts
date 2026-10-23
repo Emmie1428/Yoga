@@ -1,4 +1,4 @@
-import { beforeAll, afterAll, describe, it, expect } from 'vitest'
+import { beforeAll, afterAll, describe, it, expect, vi } from 'vitest'
 import type { Server } from 'node:http'
 import app from '../app'
 import { generateToken } from '../utils/jwt.util'
@@ -189,13 +189,13 @@ describe('POST /api/user/promote-admin', () => {
 
 
 ///////////////////////////////////////////////////
-/*tests unitaire pour les erreur 401*/
+/*tests unitaire pour les erreur 401 et la fonction privée getParam*/
 
 import { UserController } from '../controllers/user.controller'
 import { AuthRequest } from '../middleware/auth.middleware'
 import { Response } from 'express'
 
-describe('UserController.delete', () => {
+describe('UserController - delete', () => {
   it('should throw 401 when userId is undefined', async () => {
     const controller = new UserController()
 
@@ -212,7 +212,7 @@ describe('UserController.delete', () => {
   })
 })
 
-describe('UserController.promoteSelfToAdmin', () => {
+describe('UserController - promoteSelfToAdmin', () => {
   it('should throw 401 when userId is undefined', async () => {
     const controller = new UserController()
 
@@ -226,5 +226,25 @@ describe('UserController.promoteSelfToAdmin', () => {
       message: 'Unauthorized',
       statusCode: 401,
     })
+  })
+})
+
+
+describe('UserController - getParam', () => {
+  it('should use the first value when the parameter is an array', async () => {
+    const controller = new UserController()
+
+    const req = {
+      params: { id: ['1', '2'] },
+    } as unknown as AuthRequest
+
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as unknown as Response
+
+    await controller.getById(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
   })
 })
