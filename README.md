@@ -15,7 +15,7 @@ A full-stack web application for managing yoga studio operations, including sess
 - bcrypt (password hashing)
 
 ### Frontend
-- React 19 (Hooks only)
+- React 19
 - TypeScript 5.9+ (Strict Mode)
 - Vite 7.x
 - TailwindCSS 4.x
@@ -59,7 +59,7 @@ A full-stack web application for managing yoga studio operations, including sess
 ### 1. Clone the repository
 
 ```bash
-cd p4-dfsjs-starter
+cd Yoga
 ```
 
 ### 2. Install Backend Dependencies
@@ -82,17 +82,10 @@ Create a `.env` file in the `backend` directory:
 
 ```bash
 cd ../backend
-cp .env.example .env
+cp .env
 ```
 
-The default configuration should work with Docker Compose:
-
-```env
-DATABASE_URL="postgresql://yogauser:yogapass@localhost:5432/yogastudio"
-JWT_SECRET="your-secret-key-change-me-in-production"
-PORT=8080
-NODE_ENV=development
-```
+The default configuration should work with Docker Compose and be based on the .env.exemple
 
 ### 5. Start PostgreSQL with Docker
 
@@ -132,7 +125,7 @@ cd backend
 npm run dev
 ```
 
-The API will run on `http://localhost:8080`
+The API will run on `http://localhost:8090`
 
 ### Start the Frontend (Terminal 2)
 
@@ -247,33 +240,42 @@ npm run preview      # Preview production build
 ## Project Structure
 
 ```
-p4-dfsjs-starter/
+Yoga/
 ├── backend/
 │   ├── src/
 │   │   ├── controllers/      # Request handlers
 │   │   ├── middleware/       # Auth middleware
+│   │   ├── service/          # Response handlers
 │   │   ├── dto/              # Zod validation schemas
-│   │   ├── utils/            # JWT utilities
+│   │   ├── utils/            # JWT and error utilities
+│   │   ├── tests/            # Test
 │   │   ├── routes/           # API routes
+│   │   ├── server.ts         # Server
 │   │   └── app.ts            # Express app setup
+
 │   ├── prisma/
 │   │   ├── schema.prisma     # Database schema
 │   │   └── seed.ts           # Database seeding
 │   ├── package.json
+│   ├── vitest.config.js
 │   ├── tsconfig.json
-│   └── .env
+│   ├── .env.test
+│   └── .env.example
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/            # React page components
 │   │   ├── components/       # Reusable components
 │   │   ├── services/         # API services
 │   │   ├── types/            # TypeScript types
+│   │   ├── utils/            # Error utilities
 │   │   ├── App.tsx
 │   │   └── main.tsx
 │   ├── package.json
 │   ├── vite.config.ts
+│   ├── vitest.config.ts
 │   └── tailwind.config.js
-├── docker-compose.yml
+│   ├── cypress/
+├── docker-compose.yaml
 └── README.md
 ```
 
@@ -284,7 +286,26 @@ The project supports comprehensive testing with the following frameworks:
 - **Integration tests**: For testing API endpoints
 - **End-to-end tests**: For testing critical user flows
 
-Run tests with the appropriate npm scripts in each directory.
+Run tests with the appropriate npm scripts in each directory. Migrate the same seeds as the main project for the .env.test used only for testing. 
+
+### Frontend scripts
+```bash
+npm run test         # Start vitest in watch mode
+npm run test:run     # Start a single run of votist
+npm run coverage     # Start a coverage with vitest-istanbul
+
+** Must run a npm run dev in /backend first before starting those scripts **
+VITE_CYPRESS_COVERAGE=true npm run dev  # Start Cypress with coverage, see the html doc in /coverage
+npx cypress open                        # Start Cypress in launchpad
+
+```
+
+### Backend scripts
+```bash
+** Must run a npm run dev first before starting those scripts **
+npm run test         # Start a single run of vitest in .env.test
+npm run coverage     # Start a coverage with vitest-istanbul in env.test
+```
 
 ## Troubleshooting
 
@@ -302,8 +323,8 @@ docker-compose logs postgres
 
 ### Port already in use
 ```bash
-# Check what's using port 8080
-lsof -i :8080
+# Check what's using port 8090
+lsof -i :8090
 
 # Check what's using port 3000
 lsof -i :3000
@@ -321,10 +342,5 @@ npx prisma migrate reset
 npx prisma generate
 ```
 
-## Contributing
 
-Please follow the existing code style and ensure all tests pass before submitting changes.
 
-## License
-
-MIT
