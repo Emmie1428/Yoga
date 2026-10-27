@@ -62,7 +62,7 @@ function Sessions() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <div data-cy='error' className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           {error}
         </div>
       </div>
@@ -77,6 +77,7 @@ function Sessions() {
           { user?.admin && (
             <Link
               to="/sessions/create"
+              data-cy='create-session-link'
               className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
             >
               Create Session
@@ -89,7 +90,7 @@ function Sessions() {
             <p className="text-gray-600">No sessions available</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div data-cy='session-card' className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sessions.map((session) => (
               <div key={session.id} className="bg-white rounded-lg shadow-md p-6">
                 <h3 className="text-xl font-bold text-gray-800 mb-2">
@@ -118,6 +119,7 @@ function Sessions() {
 
                   { user?.admin && (
                     <button
+                    data-cy='delete-btn'
                       onClick={() => handleDelete(session.id)}
                       className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                     >

@@ -41,6 +41,6 @@ router.get('/api/user/:id', authMiddleware, (req, res) => userController.getById
 router.post('/api/user/promote-admin', authMiddleware, (req, res, next) =>
   userController.promoteSelfToAdmin(req, res).catch(next),
 );
-router.delete('/api/user/:id', authMiddleware, (req, res) => userController.delete(req, res));
+router.delete('/api/user/:id', authMiddleware, asyncHandler((req, res) => userController.delete(req, res)));
 
 export default router;

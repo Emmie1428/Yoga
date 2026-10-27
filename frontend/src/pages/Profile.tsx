@@ -100,28 +100,28 @@ function Profile() {
               <label className="block text-gray-600 text-sm font-semibold mb-1">
                 First Name
               </label>
-              <p className="text-lg text-gray-800">{userInfo.firstName}</p>
+              <p data-cy='firstName' className="text-lg text-gray-800">{userInfo.firstName}</p>
             </div>
 
             <div className="border-b pb-4">
               <label className="block text-gray-600 text-sm font-semibold mb-1">
                 Last Name
               </label>
-              <p className="text-lg text-gray-800">{userInfo.lastName}</p>
+              <p data-cy='lastName'className="text-lg text-gray-800">{userInfo.lastName}</p>
             </div>
 
             <div className="border-b pb-4">
               <label className="block text-gray-600 text-sm font-semibold mb-1">
                 Email
               </label>
-              <p className="text-lg text-gray-800">{userInfo.email}</p>
+              <p data-cy='email' className="text-lg text-gray-800">{userInfo.email}</p>
             </div>
 
             <div className="border-b pb-4">
               <label className="block text-gray-600 text-sm font-semibold mb-1">
                 Account Type
               </label>
-              <p className="text-lg text-gray-800">
+              <p data-cy='account-type' className="text-lg text-gray-800">
                 {userInfo.admin ? (
                   <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold">
                     Administrator
@@ -152,7 +152,7 @@ function Profile() {
               <label className="block text-gray-600 text-sm font-semibold mb-1">
                 Member Since
               </label>
-              <p className="text-lg text-gray-800">
+              <p data-cy='member-since' className="text-lg text-gray-800">
                 {new Date(userInfo.createdAt).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
@@ -164,12 +164,14 @@ function Profile() {
 
           <div className="flex space-x-4">
             <button
+              data-cy='sessions-link'
               onClick={() => navigate('/sessions')}
               className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700"
             >
               Back to Sessions
             </button>
             <button
+              data-cy='delete-btn'
               onClick={handleDeleteAccount}
               className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
             >

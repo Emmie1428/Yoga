@@ -25,7 +25,6 @@ describe('register page', () => {
     cy.url().should('include', '/register')
   })
   it('should show an error when the email is already used', () => {
-
     cy.get('[data-cy="firstName"]').type('Jean')
     cy.get('[data-cy="lastName"]').type('Dupont')
     cy.get('[data-cy="email"]').type('yoga@studio.com') //email existant dans la bd//
