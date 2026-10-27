@@ -7,9 +7,10 @@ export default defineConfig({
   plugins: [react(), tailwindcss(),
     istanbul({
       include: 'src/**/*',
-      exclude: ['node_modules', 'cypress/**/*'],
+      exclude: ['node_modules', 'cypress/**/*', 'src/types/**'],
       extension: ['.js', '.ts', '.tsx'],
       requireEnv: true,
+      cypress: true
     })
   ],
   server: {

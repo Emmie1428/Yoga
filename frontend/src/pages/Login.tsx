@@ -1,27 +1,27 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { authService } from '../services/auth.service';
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { authService } from '../services/auth.service'
 
 function Login() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.SubmitEvent) : Promise<void> => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
 
     try {
-      await authService.login({ email, password });
-      navigate('/sessions');
+      await authService.login({ email, password })
+      navigate('/sessions')
     } catch {
-      setError('Login failed');
+      setError('Login failed')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
@@ -31,7 +31,7 @@ function Login() {
         </h2>
 
         {error ? (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div data-cy='error' className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
           </div>
         ) : null}
@@ -43,6 +43,7 @@ function Login() {
             </label>
             <input
               type="email"
+              data-cy='email'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
@@ -56,6 +57,7 @@ function Login() {
             </label>
             <input
               type="password"
+              data-cy='password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
@@ -65,6 +67,7 @@ function Login() {
 
           <button
             type="submit"
+            data-cy='login-btn'
             disabled={loading}
             className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400"
           >
@@ -74,7 +77,7 @@ function Login() {
 
         <p className="mt-4 text-center text-gray-600">
           Don't have an account?{' '}
-          <Link to="/register" className="text-indigo-600 hover:text-indigo-800">
+          <Link to="/register" data-cy='register-link' className="text-indigo-600 hover:text-indigo-800">
             Register here
           </Link>
         </p>

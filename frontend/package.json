@@ -35,5 +35,16 @@
     "vite": "^7.3.1",
     "vite-plugin-istanbul": "^9.0.1",
     "vitest": "^5.0.3"
+  },
+  "nyc": {
+    "all": true,
+    "include": [
+      "src/**/*.{js,ts,tsx}"
+    ],
+    "exclude": [
+      "cypress/**/*",
+      "node_modules/**/*",
+      "src/types/**"
+    ]
   }
 }
