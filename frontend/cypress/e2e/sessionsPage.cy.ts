@@ -71,4 +71,25 @@ describe('Sessions page - Admin status', () => {
         cy.url().should('include', '/sessions')
         cy.get('[data-cy="error"]').should('be.visible').and('contain', 'An error occurred')
     })
+    it('should delete a session successfully', () => {
+        cy.intercept('DELETE', '**/api/session/*', {
+            statusCode: 200,
+            body: {},
+        }).as('deleteSession')
+
+        cy.intercept('GET', '**/api/session', {
+            statusCode: 200,
+            body: []
+        }).as('getSessions')
+
+        cy.on('window:confirm', () => true)
+        cy.get('[data-cy="delete-btn"]').first().click()
+
+        cy.wait('@deleteSession')
+            .its('response.statusCode')
+            .should('equal', 200)
+        cy.wait('@getSessions')
+
+        cy.contains('No sessions available').should('be.visible')
+    })
 })

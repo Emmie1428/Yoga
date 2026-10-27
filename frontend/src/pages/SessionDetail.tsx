@@ -86,7 +86,7 @@ function SessionDetail() {
   if (error || !session) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <div data-cy='error' className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           {error || 'Session not found'}
         </div>
       </div>
@@ -99,14 +99,14 @@ function SessionDetail() {
     <div className="min-h-screen bg-gray-100 py-8">
       <div className="container mx-auto px-4 max-w-3xl">
         <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+          <h1 data-cy='name' className="text-3xl font-bold text-gray-800 mb-6">
             {session.name}
           </h1>
 
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-700 mb-2">Details</h2>
             <div className="space-y-2 text-gray-600">
-              <p>
+              <p data-cy='date'>
                 <strong>Date:</strong>{' '}
                 {new Date(session.date).toLocaleDateString('en-US', {
                   weekday: 'long',
@@ -115,12 +115,12 @@ function SessionDetail() {
                   day: 'numeric',
                 })}
               </p>
-              <p>
+              <p data-cy='teacher'>
                 <strong>Teacher:</strong> {session.teacher.firstName}{' '}
                 {session.teacher.lastName}
               </p>
               <p>
-                <strong>Participants:</strong> {session.users.length}
+                <strong data-cy='participant'>Participants:</strong> {session.users.length}
               </p>
             </div>
           </div>
@@ -129,7 +129,7 @@ function SessionDetail() {
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
               Description
             </h2>
-            <p className="text-gray-600 whitespace-pre-wrap">
+            <p data-cy='description' className="text-gray-600 whitespace-pre-wrap">
               {session.description}
             </p>
           </div>
@@ -139,12 +139,14 @@ function SessionDetail() {
               <>
                 <button
                   onClick={() => navigate(`/sessions/edit/${id}`)}
+                  data-cy='session-edit-link'
                   className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700"
                 >
                   Edit
                 </button>
                 <button
                   onClick={handleDelete}
+                  data-cy='delete-btn'
                   className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700"
                 >
                   Delete
@@ -155,6 +157,7 @@ function SessionDetail() {
                 {isParticipating ? (
                   <button
                     onClick={handleUnparticipate}
+                    data-cy='participate-link'
                     className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700"
                   >
                     Leave Session
@@ -162,6 +165,7 @@ function SessionDetail() {
                 ) : (
                   <button
                     onClick={handleParticipate}
+                    data-cy='unparticipate-link'
                     className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
                   >
                     Join Session
@@ -172,6 +176,7 @@ function SessionDetail() {
 
             <button
               onClick={() => navigate('/sessions')}
+              data-cy='sessions-link'
               className="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400"
             >
               Back to Sessions
