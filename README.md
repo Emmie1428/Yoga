@@ -294,10 +294,9 @@ npm run test         # Start vitest in watch mode
 npm run test:run     # Start a single run of votist
 npm run coverage     # Start a coverage with vitest-istanbul
 
-** Must run a npm run dev in /backend first before starting those scripts **
+** Must run the script: npm run dev:test in /backend first before starting those scripts **
 CYPRESS_COVERAGE=true npm run dev  # Start Cypress with coverage, see the index.html doc in coverage/lcov-report
 npx cypress open                        # Start Cypress in launchpad
-
 ```
 
 ### Backend scripts
