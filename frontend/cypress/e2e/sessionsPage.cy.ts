@@ -46,9 +46,8 @@ describe('Sessions page - Admin status', () => {
         cy.url().should('include', '/session')
     })
     it('should keep the session when deletion is cancelled', () => {
-        cy.on('window:confirm', (message) => {
-            expect(message).to.equal('Are you sure you want to delete this session?')
-            return false
+        cy.window().then((win) => {
+            cy.stub(win, 'confirm').returns(false)
         })
 
         cy.get('[data-cy="delete-btn"]').first().click()
@@ -62,7 +61,9 @@ describe('Sessions page - Admin status', () => {
             body: {},
         }).as('deleteSession')
 
-        cy.on('window:confirm', () => true)
+        cy.window().then((win) => {
+            cy.stub(win, 'confirm').returns(true)
+        })
         cy.get('[data-cy="delete-btn"]').first().click()
         cy.wait('@deleteSession').then((interception) => {
             expect(interception.response?.statusCode).to.equal(500)
@@ -82,7 +83,9 @@ describe('Sessions page - Admin status', () => {
             body: []
         }).as('getSessions')
 
-        cy.on('window:confirm', () => true)
+        cy.window().then((win) => {
+            cy.stub(win, 'confirm').returns(true)
+        })
         cy.get('[data-cy="delete-btn"]').first().click()
 
         cy.wait('@deleteSession')

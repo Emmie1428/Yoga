@@ -157,7 +157,7 @@ function SessionDetail() {
                 {isParticipating ? (
                   <button
                     onClick={handleUnparticipate}
-                    data-cy='participate-link'
+                    data-cy='unparticipate-btn'
                     className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700"
                   >
                     Leave Session
@@ -165,7 +165,7 @@ function SessionDetail() {
                 ) : (
                   <button
                     onClick={handleParticipate}
-                    data-cy='unparticipate-link'
+                    data-cy='participate-btn'
                     className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
                   >
                     Join Session

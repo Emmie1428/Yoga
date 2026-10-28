@@ -137,6 +137,7 @@ function Profile() {
                   <button
                     onClick={handlePromoteAdmin}
                     disabled={promoteLoading}
+                    data-cy='promote-btn'
                     className="bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 disabled:opacity-60"
                   >
                     {promoteLoading ? 'Promoting...' : 'Promote to Admin (Dev)'}

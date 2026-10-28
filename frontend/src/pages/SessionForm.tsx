@@ -123,6 +123,7 @@ function SessionForm() {
               <input
                 type="text"
                 name="name"
+                data-cy='name'
                 value={formData.name}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
@@ -137,6 +138,7 @@ function SessionForm() {
               <input
                 type="date"
                 name="date"
+                data-cy='date'
                 value={formData.date}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
@@ -152,6 +154,7 @@ function SessionForm() {
                 name="teacherId"
                 value={formData.teacherId}
                 onChange={handleChange}
+                data-cy='teacherId'
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                 required
               >
@@ -173,6 +176,7 @@ function SessionForm() {
                 value={formData.description}
                 onChange={handleChange}
                 rows={6}
+                data-cy='description'
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                 required
               />
@@ -182,6 +186,7 @@ function SessionForm() {
               <button
                 type="submit"
                 disabled={loading}
+                data-cy='submit-btn'
                 className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400"
               >
                 {loading ? 'Saving...' : isEditMode ? 'Update Session' : 'Create Session'}
@@ -189,6 +194,7 @@ function SessionForm() {
               <button
                 type="button"
                 onClick={() => navigate('/sessions')}
+                data-cy='cancel-btn'
                 className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400"
               >
                 Cancel
